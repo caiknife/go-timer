@@ -73,6 +73,7 @@ func (timer *Timer) Stop() {
 	if timer.running {
 		close(timer.process)
 		timer.running = false
+		timer.process = nil
 	}
 }
 

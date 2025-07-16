@@ -74,3 +74,19 @@ func TestMultipleTimers(t *testing.T) {
 
 	time.Sleep(time.Duration(2500) * time.Millisecond)
 }
+
+func TestTimer_Stop(t *testing.T) {
+	interval := SetInterval(func(args ...interface{}) {
+		t.Log("hello, world")
+	}, 200)
+
+	time.Sleep(time.Second)
+
+	interval.Stop()
+
+	time.Sleep(time.Second)
+
+	interval.Start()
+
+	time.Sleep(time.Second)
+}
