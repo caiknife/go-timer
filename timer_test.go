@@ -83,10 +83,13 @@ func TestTimer_Stop(t *testing.T) {
 	time.Sleep(time.Second)
 
 	interval.Stop()
+	t.Log("timer stopped")
 
 	time.Sleep(time.Second)
 
 	interval.Start()
+	t.Log("timer started")
 
 	time.Sleep(time.Second)
+	t.Log("end")
 }
