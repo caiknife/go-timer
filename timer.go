@@ -1,6 +1,7 @@
 package timer
 
 import (
+	"context"
 	"time"
 )
 
@@ -13,8 +14,11 @@ type Timer struct {
 	fn           func(args ...interface{})
 	args         []interface{}
 	ticker       *time.Ticker
-	process      chan struct{}
-	running      bool
+	// process      chan struct{}
+	running bool
+
+	stopCtx context.Context
+	cancel  context.CancelFunc
 }
 
 // Start the timer.
@@ -23,14 +27,15 @@ func (timer *Timer) Start() {
 		return
 	}
 
-	if timer.process != nil {
+	/*if timer.process != nil {
 		close(timer.process)
 	}
-
+	*/
 	timer.running = true
-	timer.process = make(chan struct{})
+	// timer.process = make(chan struct{})
 	timer.ticker = time.NewTicker(timer.interval)
 	timer.iterations = 0
+	timer.stopCtx, timer.cancel = context.WithCancel(context.Background())
 
 	go func(timer *Timer) {
 		for {
@@ -57,7 +62,7 @@ func (timer *Timer) Start() {
 						}
 					}(timer)
 
-				case <-timer.process:
+				case <-timer.stopCtx.Done():
 					timer.Stop()
 					return
 				}
@@ -71,9 +76,8 @@ func (timer *Timer) Start() {
 // Stop the timer.
 func (timer *Timer) Stop() {
 	if timer.running {
-		close(timer.process)
+		timer.cancel()
 		timer.running = false
-		timer.process = nil
 	}
 }
 

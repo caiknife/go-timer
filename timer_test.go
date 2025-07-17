@@ -81,15 +81,33 @@ func TestTimer_Stop(t *testing.T) {
 	}, 200)
 
 	time.Sleep(time.Second)
-
-	interval.Stop()
-	t.Log("timer stopped")
+	go func() {
+		interval.Stop()
+		t.Log("timer stopped")
+	}()
 
 	time.Sleep(time.Second)
-
-	interval.Start()
-	t.Log("timer started")
+	go func() {
+		interval.Start()
+		t.Log("timer started")
+	}()
 
 	time.Sleep(time.Second)
 	t.Log("end")
+}
+
+func TestTimer_Stop2(t *testing.T) {
+	timeout := SetTimeout(func(args ...interface{}) {
+		t.Log("hello, world")
+	}, 200)
+
+	go func() {
+		timeout.Stop()
+	}()
+
+	time.Sleep(time.Second)
+
+	timeout.Start()
+
+	time.Sleep(time.Second)
 }
